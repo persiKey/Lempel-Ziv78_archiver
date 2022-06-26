@@ -19,7 +19,7 @@ using std::list;
 
 using std::int8_t;
 
-typedef vector<bool> b_vector;
+typedef 
 
 
 struct Node
@@ -159,12 +159,12 @@ int main(int argc, char** argv)
 	//std::cout << '\n';
 
 	int8_t buffer;
-	list<std::pair<b_vector, int>> analized;
+	list<std::pair<string, int>> analized;
 	
 	int global_index = 1;
 	int prev_index = 0;
-	map<b_vector, int> vals;
-	std::pair<b_vector, int> temp_val;
+	map<string, int> vals;
+	std::pair<string, int> temp_val;
 
 	while (!file.eof())
 	{
@@ -172,14 +172,15 @@ int main(int argc, char** argv)
 		{
 			break;
 		}
-		//for (int i = sizeof(int8_t) * 8 - 1; i >= 0; --i)
+		/*for (int i = sizeof(int8_t) * 8 - 1; i >= 0; --i)*/
 		//{
 		//	if (!((i + 1) % 4)) std::cout << ' ';
 		//	std::cout << get_nth_bit(buffer, i);
 		//}
 		do
 		{
-			temp_val.first.push_back(get_nth_bit(buffer, sizeof(int8_t) * 8 - left % (sizeof(int8_t) * 8) - 1));
+			bool nth_bit = get_nth_bit(buffer, sizeof(int8_t) * 8 - left % (sizeof(int8_t) * 8) - 1);
+			temp_val.first.push_back(char(nth_bit) + '0');
 			
 			left++;
 			auto a = vals.find(temp_val.first);
@@ -207,10 +208,8 @@ int main(int argc, char** argv)
 	std::cout << '\n';
 	for (auto i : analized)
 	{
-		for (auto k : i.first)
-			std::cout << k;
-		std::cout << '-' << i.second << ' ';
+		std::cout << i.first << '-' << i.second << ' ';
 	}
-	std::cout << '\n';
+	std::cout << '\n' << "left: " << left << "\ndickt: " << analized.size() ;
 	return 0;
 }
