@@ -7,6 +7,7 @@
 #include <list>
 #include <algorithm>
 #include <string>
+#include <math.h>
 
 using std::ofstream;
 using std::ifstream;
@@ -16,18 +17,15 @@ using std::vector;
 using std::set;
 using std::string;
 using std::list;
+using std::string;
 
 using std::int8_t;
 
-typedef 
+constexpr int BIT_IN_BYTE = sizeof(int8_t) * 8;
 
+typedef std::pair<int, bool> to_write;
+typedef vector<bool> bvector;
 
-struct Node
-{
-	string bits;
-	int index;
-
-};
 
 inline bool get_nth_bit(int a, size_t n)
 {
@@ -52,137 +50,47 @@ int8_t get_bit_range(int8_t a, size_t beg, size_t end)
 	return res;
 }
 
-struct INT_INFO
+inline void write_to_n_bit(int8_t& dest,size_t bit_num, bool bit)
 {
-	int val;
-	size_t null_shift;
-	bool operator==(const INT_INFO& cmp)
-	{
-		return (cmp.val == this->val) && (cmp.null_shift == this->null_shift);
-	}
-	friend std::ostream& operator<<( std::ostream& out, INT_INFO a)
-	{
-		for (int i = a.null_shift - 1; i >= 0; --i)
-		{
-			out << get_nth_bit(a.val, i);
-		}
-		return out;
-	}
-	bool operator<(const INT_INFO& cmp)
-	{
-		return (cmp.val > this->val) && (cmp.null_shift > this->null_shift);
-	}
-	friend bool operator<(const INT_INFO& A, const INT_INFO& B)
-	{
-		return (A.val > B.val) && (A.null_shift > B.null_shift);
-	}
-};
+	dest |= (bit << bit_num);
+	//std::cout << bit << ' ';
+}
 
-
-
-
-int main(int argc, char** argv)
+inline void write_to_n_bit(int& dest, size_t bit_num, bool bit)
 {
-	
-	//short a;
-	//int beg;
-	//int end;
-	//int8_t l;
-	//while (true)
-	//{
-	//	std::cin >> a >> beg >> end;
-	//
-	//	l = get_bit_range((char)a, beg, end);
-	//	for (int i = sizeof(int8_t)*8-1; i >= 0; --i)
-	//	{
-	//		if (!((i+1) % 4)) std::cout << ' ';
-	//		std::cout << get_nth_bit(l, i);
-	//	}
-	//	printf("\n");
-	//	for (int i = sizeof(int8_t) * 8 - 1; i >= 0; --i)
-	//	{
-	//		if (!((i + 1) % 4)) std::cout << ' ';
-	//		std::cout << get_nth_bit(a, i);
-	//	}
-	//	printf("\n");
-	//}
+	dest |= (bit << bit_num);
+}
 
+void GetListToWrite(string file_name, list<to_write> & list_write)
+{
+	ifstream file(file_name, std::ios_base::binary | std::ios_base::in);
 
-
-	ifstream file("test.txt",std::ios_base::binary | std::ios_base::in);
-
-	size_t left = 0, right = 0;
-
-
-	//int8_t buffer;
-	//INT_INFO temp_val; temp_val.val = temp_val.null_shift = 0;
-
-	//vector<INT_INFO> vals;
-	//set<INT_INFO> search_vals;
-
-	//while (!file.eof())
-	//{
-	//	int a;
-
-	//	if (!file.read((char*)&buffer, sizeof(int8_t)))
-	//	{
-	//		break;
-	//	}
-	//	for (int i = sizeof(int8_t) * 8 - 1; i >= 0; --i)
-	//	{
-	//		if (!((i + 1) % 4)) std::cout << ' ';
-	//		std::cout << get_nth_bit(buffer, i);
-	//	}
-	//	do 
-	//	{// Ya kushayu 
-	//		temp_val.val <<= 1;
-	//		temp_val.val += get_nth_bit(buffer, sizeof(int8_t)*8 - left % (sizeof(int8_t)*8) - 1);
-	//		left++;
-	//		++temp_val.null_shift;
-	//		
-	//		if ( search_vals.find(temp_val) == search_vals.end() )
-	//		{
-	//			search_vals.insert(temp_val);
-	//			vals.push_back(temp_val);
-	//			temp_val.val = temp_val.null_shift = 0;
-	//		}
-	//	}while ((left % (sizeof(int8_t) * 8)));
-	//}
-
-	//if(temp_val.null_shift != 0)
-	//	vals.push_back(temp_val);
-	//std::cout << '\n';
-	//for (auto i : vals)
-	//{
-	//	std::cout << i << ' ';
-	//}
-	//std::cout << '\n';
-
+	size_t left = 0;
 	int8_t buffer;
-	list<std::pair<string, int>> analized;
-	
+	bool nth_bit;
+
 	int global_index = 1;
 	int prev_index = 0;
-	map<string, int> vals;
-	std::pair<string, int> temp_val;
 
+	std::pair<string, int> temp_val;
+	map<string, int> vals;
+
+	list_write.push_back({ 0,0 });
 	while (!file.eof())
 	{
 		if (!file.read((char*)&buffer, sizeof(int8_t)))
-		{
 			break;
-		}
-		/*for (int i = sizeof(int8_t) * 8 - 1; i >= 0; --i)*/
+		//for (int i = sizeof(int8_t) * 8 - 1; i >= 0; --i)
 		//{
 		//	if (!((i + 1) % 4)) std::cout << ' ';
 		//	std::cout << get_nth_bit(buffer, i);
 		//}
 		do
 		{
-			bool nth_bit = get_nth_bit(buffer, sizeof(int8_t) * 8 - left % (sizeof(int8_t) * 8) - 1);
+			nth_bit = get_nth_bit(buffer, sizeof(int8_t) * 8 - left % (sizeof(int8_t) * 8) - 1);
 			temp_val.first.push_back(char(nth_bit) + '0');
-			
-			left++;
+
+			++left;
 			auto a = vals.find(temp_val.first);
 			if (a == vals.end())
 			{
@@ -190,7 +98,7 @@ int main(int argc, char** argv)
 				++global_index;
 				vals.insert(temp_val);
 				temp_val.second = prev_index;
-				analized.push_back(temp_val);
+				list_write.push_back({ prev_index,nth_bit });
 				temp_val.first.clear();
 				prev_index = 0;
 			}
@@ -203,13 +111,200 @@ int main(int argc, char** argv)
 	if (!temp_val.first.empty())
 	{
 		temp_val.second = prev_index;
-		analized.push_back(temp_val);
+		list_write.push_back({ prev_index,nth_bit });
 	}
+	file.close();
+}
+#include <assert.h>
+
+void WriteArchive(list<to_write>& analized)
+{
+
+}
+
+int main(int argc, char** argv)
+{
+
+	list<to_write> analized;
+	GetListToWrite("test.txt", analized);
 	std::cout << '\n';
-	for (auto i : analized)
+	//for (auto i : analized)
+	//{
+	//	std::cout << i.first << '-' << i.second << ' ';
+	//}
+	std::cout << "\ndickt: " << analized.size() ;
+	std::cout << '\n';
+	
+	ofstream file("test.out", std::ios_base::binary | std::ios_base::out);
+	int8_t buffer = 0;
+	int op_num = 4;
+	int val_num = 2;
+	int size = log2(val_num - 1) + 1;
+
+	//index | bit
+	//1
+	write_to_n_bit(buffer, 0, 0);
+	write_to_n_bit(buffer, 1, 0);
+	//2
+	write_to_n_bit(buffer, 2,(++analized.begin())->first);
+	write_to_n_bit(buffer, 3,(++analized.begin())->second);
+
+	
+	for (auto i = ++++analized.begin(); i != analized.end(); ++i,++val_num)
 	{
-		std::cout << i.first << '-' << i.second << ' ';
+		size = log2(val_num - 1) + 1;
+		for (int k = 0; k < size; ++k)
+		{
+			if (!(op_num % (sizeof(int8_t) * 8)))
+			{
+				file.write((char*)&buffer, sizeof(int8_t));
+				//for (int i = sizeof(int8_t) * 8 - 1; i >= 0; --i)
+				//{
+				//	if (!((i + 1) % 4)) std::cout << ' ';
+				//	std::cout << get_nth_bit(buffer, i);
+				//}
+				buffer = 0;
+			}
+			write_to_n_bit(buffer, (op_num++) % (sizeof(int8_t)*8), get_nth_bit(i->first, k));
+		}
+		if (!(op_num % (sizeof(int8_t) * 8)))
+		{
+			file.write((char*)&buffer, sizeof(int8_t));
+			//for (int i = sizeof(int8_t) * 8 - 1; i >= 0; --i)
+			//{
+			//if (!((i + 1) % 4)) std::cout << ' ';
+			//std::cout << get_nth_bit(buffer, i);
+			//}
+			buffer = 0;
+		}
+		write_to_n_bit(buffer, (op_num++) % (sizeof(int8_t) * 8), i->second);
 	}
-	std::cout << '\n' << "left: " << left << "\ndickt: " << analized.size() ;
+	file.write((char*)&buffer, sizeof(int8_t));
+	//for (int i = sizeof(int8_t) * 8 - 1; i >= 0; --i)
+	//{
+	//	if (!((i + 1) % 4)) std::cout << ' ';
+	//	std::cout << get_nth_bit(buffer, i);
+	//}
+	std::cout << '\n';
+
+	file.close();
+
+	vector<bvector> data;
+	{
+		data.push_back(bvector{ 0 });
+		bvector tmp;
+
+		int8_t in_buf = 0, out_buf = 0;
+		ifstream In_file("test.out", std::ios_base::binary | std::ios_base::in);
+
+		int op_num = 2;
+		int in_pos = 4;
+		
+		std::cout << '\n';
+		In_file.read((char*)&in_buf, sizeof(int8_t));
+		//for (int i = sizeof(int8_t) * 8 - 1; i >= 0; --i)
+		//{
+		//	if (!((i + 1) % 4)) std::cout << ' ';
+		//	std::cout << get_nth_bit(in_buf, i);
+		//}
+
+		bool bit = get_nth_bit(in_buf, 3);
+		tmp.push_back(bit);
+		data.push_back(tmp);
+		tmp.clear();
+		int point = 0;
+		while (!In_file.eof())
+		{
+			size = log2(data.size() - 1) + 1;
+
+			for (int i = 0; i < size; ++i)
+			{
+				if (!(in_pos % BIT_IN_BYTE))
+				{
+					if (!In_file.read((char*)&in_buf, sizeof(int8_t)))
+						break;
+					//for (int i = sizeof(int8_t) * 8 - 1; i >= 0; --i)
+					//{
+					//	if (!((i + 1) % 4)) std::cout << ' ';
+					//	std::cout << get_nth_bit(in_buf, i);
+					//}
+				}
+				write_to_n_bit(point, i , get_nth_bit(in_buf, in_pos++ % BIT_IN_BYTE));
+				
+			}
+			if (point != 0)
+			{
+				data.push_back(data[point]);
+				point = 0;
+			}
+			else
+				data.push_back({});
+
+			if (!(in_pos % BIT_IN_BYTE))
+			{
+				if (!In_file.read((char*)&in_buf, sizeof(int8_t)))
+					break;
+				//for (int i = sizeof(int8_t) * 8 - 1; i >= 0; --i)
+				//{
+				//	if (!((i + 1) % 4)) std::cout << ' ';
+				//	std::cout << get_nth_bit(in_buf, i);
+				//}
+			}
+
+			data.back().push_back(get_nth_bit(in_buf, in_pos++ % BIT_IN_BYTE));
+			
+
+		} 
+		std::cout << '\n';
+		//for (auto l : data)
+		//{
+		//	for (auto p : l)
+		//		std::cout << p;
+		//}
+		std::cout << '\n';
+		In_file.close();
+	}
+
+	assert(data.back().size() == 0);
+	data.pop_back();
+	//writting
+	{
+		ofstream Out_file("test_out.out", std::ios_base::binary | std::ios_base::out);
+		int8_t buffer = 0;
+		int out_pos = 0;
+
+		for (int i = 1; i < data.size() - 1; ++i)
+		{
+			for (auto k : data[i])
+			{
+				if (!(out_pos % BIT_IN_BYTE) && out_pos)
+				{
+					Out_file.write((char*)&buffer, sizeof(int8_t));
+					buffer = 0;
+				}
+				write_to_n_bit(buffer, BIT_IN_BYTE - 1 - out_pos++ % BIT_IN_BYTE, k);
+			}
+			
+
+		}
+
+		for (int k = 0; k < data.back().size() - 1; ++k)
+		{
+			if (!(out_pos % BIT_IN_BYTE) && out_pos)
+			{
+				Out_file.write((char*)&buffer, sizeof(int8_t));
+				buffer = 0;
+			}
+			write_to_n_bit(buffer, BIT_IN_BYTE - 1 - out_pos++ % BIT_IN_BYTE, data.back()[k]);
+		}
+		if (data.back().size() != 1)
+		{
+			Out_file.write((char*)&buffer, sizeof(int8_t));
+		}
+
+
+		Out_file.close();
+	}
+	std::cin.get();
 	return 0;
 }
