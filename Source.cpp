@@ -275,7 +275,7 @@ void Unarchive()
 
 		}
 
-		for (int k = 0; k < data.back().size() - 1; ++k)
+		for (int k = 0; k < data.back().size() - 0; ++k)
 		{
 			if (!(out_pos % BIT_IN_BYTE) && out_pos)
 			{
@@ -284,7 +284,7 @@ void Unarchive()
 			}
 			write_to_n_bit(buffer, BIT_IN_BYTE - 1 - out_pos++ % BIT_IN_BYTE, data.back()[k]);
 		}
-		if (data.back().size() != 1)
+		if (!(out_pos % BIT_IN_BYTE))
 		{
 			Out_file.write((char*)&buffer, sizeof(int8_t));
 		}
@@ -305,12 +305,12 @@ int main(int argc, char** argv)
 	//	std::cout << i.first << '-' << i.second << ' ';
 	//}
 	std::cout << "\ndickt: " << analized.size() ;
-	std::cout << '\n';
 	WriteArchive(analized);
 	
 	Unarchive();
 
 	
+	std::cout << "done" << '\n';
 	std::cin.get();
 	return 0;
 }
