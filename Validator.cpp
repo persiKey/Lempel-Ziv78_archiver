@@ -4,8 +4,6 @@
 
 static const char* FORBIDEN_CHARS = "<>:\"/\\|?*";
 
-
-
 bool Validator::ValidExist(char* file)
 {
 	DWORD dwAttrib = GetFileAttributesA(file);
@@ -47,18 +45,6 @@ bool Validator::ValidCount(int count, int min)
 	return true;
 }
 
-bool Validator::ValidAll(int argc, char** argv)
-{
-	
-	if (!ValidName(argv[ARGS::OUT_FILENAME])) return false;
-
-	for (int i = ARGS::TARGET_FILES_FROM; i < argc;++i)
-	{
-		if (!ValidExist(argv[i]))
-			return false;
-	}
-	return true;
-}
 
 bool Validator::ValidAllD(int argc, char** argv)
 {
