@@ -7,24 +7,24 @@ CommandInterpreter::CommandInterpreter(ArchiveManager& man) : manager(man){}
 
 void CommandInterpreter::Execute(int argc, char** argv)
 {
-	if(!validator.ValidAll(argc, argv)) return;
-
-	if (argv[ARGS::COMMAND] == "--compress")
+	
+	if (!strcmp(argv[ARGS::COMMAND],"--compress"))
 	{
-		int args = argc - ARGS::TARGET_FILES_FROM + 1;
-		vector<string> filenames;
+		if (!validator.ValidAllC(argc, argv)) return;
+
+		int args = argc - ARGS::TARGET_FILES_FROM;
+		vector<string> filenames(args);
 		
-		for (int i = 0; i < argc-args; ++i)
+		for (int i = 0; i < args; ++i)
 		{
 			filenames[i] = argv[ARGS::TARGET_FILES_FROM + i];
 		}
-
-		if(argc < MIN_ARGS_COMP){std::cerr << "Not enough arguments!\n"; return;}
 		
 		manager.Compress(argv[ARGS::OUT_FILENAME], filenames, args );
 	}
-	else if (argv[ARGS::COMMAND] == "--decompress")
+	else if (!strcmp(argv[ARGS::COMMAND], "--decompress"))
 	{
+		if (!validator.ValidAllD(argc, argv)) return;
 		manager.Decompress(argv[ARGS::OUT_FILENAME]);
 	}
 	else

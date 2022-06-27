@@ -1,6 +1,7 @@
 #include "ArchiveManager.h"
 #include <fstream>
 #include "ArchiveLZ78.h"
+#include <iostream>
 
 ArchiveManager::ArchiveManager()
 {
@@ -20,7 +21,7 @@ void ArchiveManager::WritePreambula(std::ofstream& file, const vector<string>& f
 
 	for (int i = 0; i < files_count; ++i)
 	{
-		size_t str_size = filenames.size();
+		size_t str_size = filenames[i].size();
 		file.write((char*)&str_size, sizeof(size_t));
 		for (int k = 0; k < str_size; ++k)
 			file.write((char*)&filenames[i][k], sizeof(char));
@@ -49,7 +50,7 @@ void ArchiveManager::ReadPreambula(std::ifstream& file, vector<int32_t>& offsets
 		filenames.push_back({});
 		size_t str_size;
 		file.read((char*)&str_size, sizeof(size_t));
-		for (int k = 0; i < str_size; ++k)
+		for (int k = 0; k < str_size; ++k)
 		{
 			char ch;
 			file.read((char*)&ch, sizeof(char));
@@ -67,13 +68,15 @@ void ArchiveManager::Compress(char* out_filename, const vector<string>& filename
 
 	for (int i = 0; i < files_count; ++i)
 	{
+		std::cout << "Archiving " << filenames[i] << "...";
 		int32_t offset = Archive->Archive(arch_file, filenames[i]);
 		auto save_pos = arch_file.tellp();
-		arch_file.seekp((i + 1) * sizeof(int32_t));
+		arch_file.seekp(((long long(i) + 1) * sizeof(int32_t)));
 		arch_file.write((char*)&offset, sizeof(int32_t));
 		arch_file.seekp(save_pos);
+		std::cout << "Done\n";
 	}
-
+	arch_file.close();
 }
 
 void ArchiveManager::Decompress(char* filename)
@@ -88,7 +91,10 @@ void ArchiveManager::Decompress(char* filename)
 
 	for (int i = 0; i < file_count; ++i)
 	{
+		std::cout << "Unarchiving " << filenames[i] << "...";
 		Archive->Unarchive(arch_file, offsets[i], filenames[i]);
+		std::cout << "Done\n";
 	}
 
+	arch_file.close();
 }

@@ -18,6 +18,7 @@ private:
 
 public:
 	ArchiveManager();
+	~ArchiveManager();
 	void Compress(char* out_filename, const vector<string> &filenames, int32_t files_count);
 	void Decompress(char* filename);
 };

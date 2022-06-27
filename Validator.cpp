@@ -13,9 +13,9 @@ bool Validator::ValidExist(char* file)
 	if (findFile == INVALID_HANDLE_VALUE)
 	{
 		if (GetLastError() == ERROR_FILE_NOT_FOUND)
-			std::cerr << L"File \"" << file <<"\" not found!\n";
+			std::cerr << "File \"" << file <<"\" not found!\n";
 		else
-			std::cerr << L"Something went wrong!\n";
+			std::cerr << "Something went wrong!\n";
 
 		return false;
 	}
@@ -33,16 +33,22 @@ bool Validator::ValidName(char* file)
 				std::cerr << "Forbiden char \'" << file[i] << "\' in \"" << file << "\"\n";
 				return false;
 			}
+		++i;
+	}
+	return true;
+}
+
+bool Validator::ValidCount(int count, int min)
+{
+	if (count < min)
+	{
+		std::cerr << "Not enough arguments!\n"; return false;
 	}
 	return true;
 }
 
 bool Validator::ValidAll(int argc, char** argv)
 {
-	if (argc < ARGS::MIN_ARGC)
-	{
-		std::cerr << "Not enough arguments!\n"; return false;
-	}
 	
 	if (!ValidName(argv[ARGS::OUT_FILENAME])) return false;
 
@@ -52,4 +58,18 @@ bool Validator::ValidAll(int argc, char** argv)
 			return false;
 	}
 	return true;
+}
+
+bool Validator::ValidAllD(int argc, char** argv)
+{
+	if (!ValidCount(argc, ARGS::MIN_ARGS_DCOMP)) return false;
+
+	return ValidExist(argv[ARGS::OUT_FILENAME]);
+}	
+
+bool Validator::ValidAllC(int argc, char** argv)
+{
+	if (!ValidCount(argc, ARGS::MIN_ARGS_COMP)) return false;
+
+	return ValidAll(argc, argv);
 }

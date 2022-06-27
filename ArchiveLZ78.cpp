@@ -1,5 +1,6 @@
 #include "ArchiveLZ78.h"
 #include <map>
+#include <assert.h>
 
 using std::map;
 
@@ -94,10 +95,10 @@ int32_t ArchiveLZ78::WriteListData(ofstream& out_file)
 
 	return (out_file.tellp() - start_pos);
 }
-
-void ArchiveLZ78::GetUnarchivedData(ifstream& in_file, size_t size)
+#include <iostream>
+void ArchiveLZ78::GetUnarchivedData(ifstream& in_file, size_t offset)
 {
-	auto end_pos = in_file.tellg().operator+(size);
+	auto end_pos = offset + in_file.tellg();
 
 	data.push_back(bvector{ 0 });
 	bvector tmp; // remove
@@ -114,16 +115,19 @@ void ArchiveLZ78::GetUnarchivedData(ifstream& in_file, size_t size)
 	tmp.push_back(bit);
 	data.push_back(tmp);
 	tmp.clear();
-	int point = 0;
+	uint32_t point = 0;
 
-	while (in_file.tellg() != end_pos)
+	while (in_file.tellg() <= end_pos)
 	{
+		int a = in_file.tellg();
+
 		size = log2(data.size() - 1) + 1;
 
 		for (int i = 0; i < size; ++i)
 		{
 			if (!(in_pos % BITS_IN_BYTE))
 			{
+				if (in_file.tellg() == end_pos) break;
 				if (!in_file.read((char*)&in_buf, sizeof(int8_t)))
 					break;
 			}
@@ -140,6 +144,7 @@ void ArchiveLZ78::GetUnarchivedData(ifstream& in_file, size_t size)
 
 		if (!(in_pos % BITS_IN_BYTE))
 		{
+			if (in_file.tellg() == end_pos) break;
 			if (!in_file.read((char*)&in_buf, sizeof(int8_t)))
 				break;
 		}
@@ -148,12 +153,12 @@ void ArchiveLZ78::GetUnarchivedData(ifstream& in_file, size_t size)
 	}
 
 }
-#include <assert.h>
+
 void ArchiveLZ78::WriteRawData(const string& out_filename)
 {
+
 	assert(data.back().size() == 0);
 	data.pop_back();
-
 	{
 		ofstream Out_file(out_filename, std::ios_base::binary | std::ios_base::out);
 		uint8_t buffer = 0;
@@ -193,6 +198,7 @@ void ArchiveLZ78::WriteRawData(const string& out_filename)
 
 int32_t ArchiveLZ78::Archive(ofstream& out_file, const string& target_filename)
 {
+
 	GetListToWrite(target_filename);
 	int32_t offset = WriteListData(out_file);
 	analized.clear();

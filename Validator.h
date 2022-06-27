@@ -5,15 +5,18 @@ enum ARGS
 	COMMAND = 1,
 	OUT_FILENAME = 2,
 	TARGET_FILES_FROM = 3,
-	MIN_ARGC = 2,
-	MIN_ARGS_COMP = 3
+	MIN_ARGS_DCOMP = 3,
+	MIN_ARGS_COMP = 4
 };
 
 class Validator
 {
 	bool ValidExist(char* file);
 	bool ValidName(char* file);
-public:
+	bool ValidCount(int count, int min);
 	bool ValidAll(int argc, char** argv);
+public:
+	bool ValidAllC(int argc, char** argv);
+	bool ValidAllD(int argc, char** argv);
 };
 
