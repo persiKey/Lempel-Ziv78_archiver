@@ -10,6 +10,6 @@ class IArchive
 {
 	
 public:
-	virtual void Archive(ofstream& out_file, ifstream& target_file) = 0;
+	virtual int32_t Archive(ofstream& out_file, const string&  target_filename) = 0;
 	virtual void Unarchive(ifstream& in_file, size_t size, const string& out_filename) = 0;
 };

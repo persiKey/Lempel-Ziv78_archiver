@@ -1,26 +1,29 @@
 #include "ArchiveManager.h"
 #include <fstream>
+#include "ArchiveLZ78.h"
 
-
-
-
-void ArchiveManager::Compress(char* out_filename, const vector<string>& filenames, int32_t files_count)
+ArchiveManager::ArchiveManager()
 {
-	//preambula
-	ofstream arch_file(out_filename, std::ios_base::binary);
-	arch_file.write((char*)&files_count, sizeof(int32_t));
+	Archive = new ArchiveLZ78;
+}
+
+ArchiveManager::~ArchiveManager()
+{
+	delete Archive;
+}
+
+void ArchiveManager::WritePreambula(std::ofstream& file, const vector<string>& filenames, int32_t& files_count)
+{
+	file.write((char*)&files_count, sizeof(int32_t));
 	for (int i = 0; i < files_count; ++i)
-	{
-		arch_file.write((char*)&files_count, sizeof(int32_t));
-	}
+		file.write((char*)&files_count, sizeof(int32_t));
+
 	for (int i = 0; i < files_count; ++i)
 	{
 		size_t str_size = filenames.size();
-		arch_file.write((char*)&str_size, sizeof(size_t));
+		file.write((char*)&str_size, sizeof(size_t));
 		for (int k = 0; k < str_size; ++k)
-		{
-			arch_file.write((char*)&filenames[i][k], sizeof(char));
-		}
+			file.write((char*)&filenames[i][k], sizeof(char));
 	}
 	/*
 	*_count int
@@ -28,11 +31,64 @@ void ArchiveManager::Compress(char* out_filename, const vector<string>& filename
 	* _name_leght_i int
 	* name_i char*
 	*/
+}
+
+void ArchiveManager::ReadPreambula(std::ifstream& file, vector<int32_t>& offsets, vector<string>& filenames, int32_t& file_count)
+{
+
+	file.read((char*)&file_count, sizeof(int32_t));
+
+	for (int i = 0; i < file_count; ++i)
+	{
+		offsets.push_back({});
+		file.read((char*)&offsets[i], sizeof(int32_t));
+	}
+
+	for (int i = 0; i < file_count; ++i)
+	{
+		filenames.push_back({});
+		size_t str_size;
+		file.read((char*)&str_size, sizeof(size_t));
+		for (int k = 0; i < str_size; ++k)
+		{
+			char ch;
+			file.read((char*)&ch, sizeof(char));
+			filenames.back().push_back(ch);
+		}
+	}
+}
 
 
+void ArchiveManager::Compress(char* out_filename, const vector<string>& filenames, int32_t files_count)
+{
+	ofstream arch_file(out_filename, std::ios_base::binary);
+
+	WritePreambula(arch_file, filenames, files_count);
+
+	for (int i = 0; i < files_count; ++i)
+	{
+		int32_t offset = Archive->Archive(arch_file, filenames[i]);
+		auto save_pos = arch_file.tellp();
+		arch_file.seekp((i + 1) * sizeof(int32_t));
+		arch_file.write((char*)&offset, sizeof(int32_t));
+		arch_file.seekp(save_pos);
+	}
 
 }
 
 void ArchiveManager::Decompress(char* filename)
 {
+	ifstream arch_file(filename, std::ios_base::binary);
+	
+	int32_t file_count;
+	vector<int32_t> offsets;
+	vector<string> filenames;
+
+	ReadPreambula(arch_file, offsets, filenames, file_count);
+
+	for (int i = 0; i < file_count; ++i)
+	{
+		Archive->Unarchive(arch_file, offsets[i], filenames[i]);
+	}
+
 }

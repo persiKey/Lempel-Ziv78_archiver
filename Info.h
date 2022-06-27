@@ -10,7 +10,7 @@ using std::vector;
 
 constexpr int BITS_IN_BYTE = sizeof(uint8_t) * 8;
 
-typedef std::pair<int, bool> to_write;
+typedef std::pair<uint32_t, bool> to_write;
 typedef vector<bool> bvector;
 
 template<typename T>
