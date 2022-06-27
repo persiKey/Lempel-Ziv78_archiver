@@ -17,9 +17,9 @@ using std::vector;
 using std::set;
 using std::string;
 using std::list;
-using std::string;
 
 using std::int8_t;
+
 
 constexpr int BIT_IN_BYTE = sizeof(int8_t) * 8;
 
@@ -53,7 +53,6 @@ int8_t get_bit_range(int8_t a, size_t beg, size_t end)
 inline void write_to_n_bit(int8_t& dest,size_t bit_num, bool bit)
 {
 	dest |= (bit << bit_num);
-	//std::cout << bit << ' ';
 }
 
 inline void write_to_n_bit(int& dest, size_t bit_num, bool bit)
