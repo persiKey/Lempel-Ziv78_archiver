@@ -8,15 +8,15 @@ static const char* FORBIDEN_CHARS = "<>:\"/\\|?*";
 
 bool Validator::ValidExist(char* file)
 {
-	WIN32_FIND_DATAA findData;
-	HANDLE findFile = FindFirstFileA(file, &findData);
-	if (findFile == INVALID_HANDLE_VALUE)
+	DWORD dwAttrib = GetFileAttributesA(file);
+	if (dwAttrib == INVALID_FILE_ATTRIBUTES)
 	{
-		if (GetLastError() == ERROR_FILE_NOT_FOUND)
-			std::cerr << "File \"" << file <<"\" not found!\n";
-		else
-			std::cerr << "Something went wrong!\n";
-
+		std::cerr << "File \"" << file <<"\" not found!\n";
+		return false;
+	}
+	else if (dwAttrib & FILE_ATTRIBUTE_DIRECTORY)
+	{
+		std::cerr << '\"' << file << "\"is not a file\n";
 		return false;
 	}
 	return true;
