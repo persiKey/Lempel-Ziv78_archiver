@@ -95,13 +95,12 @@ int32_t ArchiveLZ78::WriteListData(ofstream& out_file)
 
 	return (out_file.tellp() - start_pos);
 }
-#include <iostream>
+
 void ArchiveLZ78::GetUnarchivedData(ifstream& in_file, size_t offset)
 {
 	auto end_pos = offset + in_file.tellg();
 
 	data.push_back(bvector{ 0 });
-	bvector tmp; // remove
 
 	uint8_t in_buf = 0;
 
@@ -111,10 +110,9 @@ void ArchiveLZ78::GetUnarchivedData(ifstream& in_file, size_t offset)
 	in_file.read((char*)&in_buf, sizeof(int8_t));
 
 	int size;
-	bool bit = get_nth_bit(in_buf, 3);
-	tmp.push_back(bit);
-	data.push_back(tmp);
-	tmp.clear();
+
+	data.push_back({ get_nth_bit(in_buf, 3) });
+
 	uint32_t point = 0;
 
 	while (in_file.tellg() <= end_pos)
