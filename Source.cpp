@@ -119,22 +119,6 @@ void GetListToWrite(string file_name, list<to_write> & list_write)
 
 void WriteArchive(list<to_write>& analized)
 {
-
-}
-
-int main(int argc, char** argv)
-{
-
-	list<to_write> analized;
-	GetListToWrite("test.txt", analized);
-	std::cout << '\n';
-	//for (auto i : analized)
-	//{
-	//	std::cout << i.first << '-' << i.second << ' ';
-	//}
-	std::cout << "\ndickt: " << analized.size() ;
-	std::cout << '\n';
-	
 	ofstream file("test.out", std::ios_base::binary | std::ios_base::out);
 	int8_t buffer = 0;
 	int op_num = 4;
@@ -146,11 +130,11 @@ int main(int argc, char** argv)
 	write_to_n_bit(buffer, 0, 0);
 	write_to_n_bit(buffer, 1, 0);
 	//2
-	write_to_n_bit(buffer, 2,(++analized.begin())->first);
-	write_to_n_bit(buffer, 3,(++analized.begin())->second);
+	write_to_n_bit(buffer, 2, (++analized.begin())->first);
+	write_to_n_bit(buffer, 3, (++analized.begin())->second);
 
-	
-	for (auto i = ++++analized.begin(); i != analized.end(); ++i,++val_num)
+
+	for (auto i = ++++analized.begin(); i != analized.end(); ++i, ++val_num)
 	{
 		size = log2(val_num - 1) + 1;
 		for (int k = 0; k < size; ++k)
@@ -165,7 +149,7 @@ int main(int argc, char** argv)
 				//}
 				buffer = 0;
 			}
-			write_to_n_bit(buffer, (op_num++) % (sizeof(int8_t)*8), get_nth_bit(i->first, k));
+			write_to_n_bit(buffer, (op_num++) % (sizeof(int8_t) * 8), get_nth_bit(i->first, k));
 		}
 		if (!(op_num % (sizeof(int8_t) * 8)))
 		{
@@ -188,7 +172,10 @@ int main(int argc, char** argv)
 	std::cout << '\n';
 
 	file.close();
+}
 
+void Unarchive()
+{
 	vector<bvector> data;
 	{
 		data.push_back(bvector{ 0 });
@@ -199,7 +186,7 @@ int main(int argc, char** argv)
 
 		int op_num = 2;
 		int in_pos = 4;
-		
+
 		std::cout << '\n';
 		In_file.read((char*)&in_buf, sizeof(int8_t));
 		//for (int i = sizeof(int8_t) * 8 - 1; i >= 0; --i)
@@ -207,7 +194,7 @@ int main(int argc, char** argv)
 		//	if (!((i + 1) % 4)) std::cout << ' ';
 		//	std::cout << get_nth_bit(in_buf, i);
 		//}
-
+		int size;
 		bool bit = get_nth_bit(in_buf, 3);
 		tmp.push_back(bit);
 		data.push_back(tmp);
@@ -229,8 +216,8 @@ int main(int argc, char** argv)
 					//	std::cout << get_nth_bit(in_buf, i);
 					//}
 				}
-				write_to_n_bit(point, i , get_nth_bit(in_buf, in_pos++ % BIT_IN_BYTE));
-				
+				write_to_n_bit(point, i, get_nth_bit(in_buf, in_pos++ % BIT_IN_BYTE));
+
 			}
 			if (point != 0)
 			{
@@ -252,9 +239,9 @@ int main(int argc, char** argv)
 			}
 
 			data.back().push_back(get_nth_bit(in_buf, in_pos++ % BIT_IN_BYTE));
-			
 
-		} 
+
+		}
 		std::cout << '\n';
 		//for (auto l : data)
 		//{
@@ -284,7 +271,7 @@ int main(int argc, char** argv)
 				}
 				write_to_n_bit(buffer, BIT_IN_BYTE - 1 - out_pos++ % BIT_IN_BYTE, k);
 			}
-			
+
 
 		}
 
@@ -305,6 +292,25 @@ int main(int argc, char** argv)
 
 		Out_file.close();
 	}
+}
+
+int main(int argc, char** argv)
+{
+
+	list<to_write> analized;
+	GetListToWrite("test.txt", analized);
+	std::cout << '\n';
+	//for (auto i : analized)
+	//{
+	//	std::cout << i.first << '-' << i.second << ' ';
+	//}
+	std::cout << "\ndickt: " << analized.size() ;
+	std::cout << '\n';
+	WriteArchive(analized);
+	
+	Unarchive();
+
+	
 	std::cin.get();
 	return 0;
 }
