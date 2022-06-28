@@ -4,6 +4,8 @@
 
 using std::unordered_map;
 
+ArchiveLZ78::~ArchiveLZ78() {}
+
 void ArchiveLZ78::GetListToWrite(const string& target_filename)
 {
 	ifstream file(target_filename, std::ios_base::binary | std::ios_base::in);

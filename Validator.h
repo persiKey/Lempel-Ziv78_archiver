@@ -11,6 +11,7 @@ enum ARGS
 
 class Validator
 {
+private:
 	bool ValidExist(char* file);
 	bool ValidName(char* file);
 	bool ValidCount(int count, int min);

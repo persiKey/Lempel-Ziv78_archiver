@@ -5,6 +5,7 @@
 
 class CommandInterpreter
 {
+private:
 	Validator validator;
 	ArchiveManager& manager;
 public:

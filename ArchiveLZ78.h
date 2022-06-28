@@ -17,6 +17,7 @@ private:
 	void WriteRawData(const string& out_filename);
 
 public:
+	~ArchiveLZ78() override;
 	int32_t Archive(ofstream& out_file, const string& target_filename);
 	void Unarchive(ifstream& in_file, size_t size, const string& out_filename);
 };
