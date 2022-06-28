@@ -57,5 +57,10 @@ bool Validator::ValidAllC(int argc, char** argv)
 {
 	if (!ValidCount(argc, ARGS::MIN_ARGS_COMP)) return false;
 
-	return ValidAll(argc, argv);
+	for (int i = ARGS::TARGET_FILES_FROM; i < argc; ++i)
+	{
+		if (!ValidExist(argv[i]))
+			return false;
+	}
+	return true;
 }

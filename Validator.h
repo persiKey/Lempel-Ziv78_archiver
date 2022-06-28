@@ -14,7 +14,6 @@ class Validator
 	bool ValidExist(char* file);
 	bool ValidName(char* file);
 	bool ValidCount(int count, int min);
-	bool ValidAll(int argc, char** argv);
 public:
 	bool ValidAllC(int argc, char** argv);
 	bool ValidAllD(int argc, char** argv);

@@ -1,8 +1,8 @@
 #include "ArchiveLZ78.h"
-#include <map>
+#include <unordered_map>
 #include <assert.h>
 
-using std::map;
+using std::unordered_map;
 
 void ArchiveLZ78::GetListToWrite(const string& target_filename)
 {
@@ -16,7 +16,7 @@ void ArchiveLZ78::GetListToWrite(const string& target_filename)
 	int prev_index = 0;
 
 	std::pair<string, uint32_t> temp_val;
-	map<string, uint32_t> vals;
+	unordered_map<string, uint32_t> vals;
 
 	analized.push_back({ 0,0 });
 	while (!file.eof())
