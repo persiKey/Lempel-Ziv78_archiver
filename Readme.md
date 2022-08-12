@@ -1,9 +1,9 @@
 # Lempel-Ziv78 archiver
-[:uk:English](#about)
+[:uk: English](#about)
 
-[:ukraine:Українська](#про-програму)
+[:ukraine: Українська](#про-програму)
 
- 
+
 ## About
 It is a simple archiver that works as a command line utility.
 ## How to use
