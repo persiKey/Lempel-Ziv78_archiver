@@ -7,7 +7,8 @@ CommandInterpreter::CommandInterpreter(ArchiveManager& man) : manager(man){}
 
 void CommandInterpreter::Execute(int argc, char** argv)
 {
-	
+	if(!validator.ValidCount(argc, ARGS::MIN_COMMAND)) return;
+
 	if (!strcmp(argv[ARGS::COMMAND],"--compress"))
 	{
 		if (!validator.ValidAllC(argc, argv)) return;

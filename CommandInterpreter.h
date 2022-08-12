@@ -9,7 +9,7 @@ private:
 	Validator validator;
 	ArchiveManager& manager;
 public:
-	CommandInterpreter(ArchiveManager& manager);
+	explicit CommandInterpreter(ArchiveManager& manager);
 	void Execute(int argc, char **argv);
 };
 
